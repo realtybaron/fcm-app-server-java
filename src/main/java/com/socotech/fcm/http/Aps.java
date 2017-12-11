@@ -95,27 +95,27 @@ public class Aps {
             return this;
         }
 
-        public Builder setSound(String sound) {
+        public Builder sound(String sound) {
             this.sound = sound;
             return this;
         }
 
-        public Builder setCategory(String category) {
+        public Builder category(String category) {
             this.category = category;
             return this;
         }
 
-        public Builder setThreadId(String threadId) {
+        public Builder threadId(String threadId) {
             this.threadId = threadId;
             return this;
         }
 
-        public Builder setBadge(Integer badge) {
+        public Builder badge(Integer badge) {
             this.badge = badge;
             return this;
         }
 
-        public Builder setContentAvailable(Integer contentAvailable) {
+        public Builder contentAvailable(Integer contentAvailable) {
             this.contentAvailable = contentAvailable;
             return this;
         }
