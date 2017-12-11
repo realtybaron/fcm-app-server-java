@@ -39,10 +39,10 @@ public class AndroidNotification {
     private String titleLocKey;
     @Expose
     @SerializedName("body_loc_args")
-    private List<String> bodyLocArgs = null;
+    private List<String> bodyLocArgs;
     @Expose
     @SerializedName("title_loc_args")
-    private List<String> titleLocArgs = null;
+    private List<String> titleLocArgs;
 
     private AndroidNotification(Builder builder) {
         tag = builder.tag;
@@ -215,12 +215,12 @@ public class AndroidNotification {
             return this;
         }
 
-        public Builder addBodyLocArg(String value) {
+        public Builder bodyLocArg(String value) {
             bodyLocArgs.add(value);
             return this;
         }
 
-        public Builder titleLocArgs(String value) {
+        public Builder titleLocArg(String value) {
             titleLocArgs.add(value);
             return this;
         }
