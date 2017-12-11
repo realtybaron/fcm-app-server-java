@@ -4,6 +4,10 @@ package com.socotech.fcm.http;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class Message {
 
     @Expose
@@ -30,15 +34,22 @@ public class Message {
     @Expose
     @SerializedName("notification")
     private Notification notification;
+    @Expose
+    @SerializedName("data")
+    private Map<String, String> data;
 
     private Message(Builder builder) {
         this.apns = builder.apns;
         this.name = builder.name;
         this.token = builder.token;
+        this.topic = builder.topic;
         this.android = builder.android;
         this.webpush = builder.webpush;
         this.condition = builder.condition;
         this.notification = builder.notification;
+        if (!builder.data.isEmpty()) {
+            data = Collections.unmodifiableMap(builder.data);
+        }
     }
 
     public Apns getApns() {
@@ -114,13 +125,18 @@ public class Message {
         private Android android;
         private Webpush webpush;
         private Notification notification;
+        private Map<String, String> data;
+
+        public Builder() {
+            this.data = new LinkedHashMap<>();
+        }
 
         public Builder apns(Apns apns) {
             this.apns = apns;
             return this;
         }
 
-        public Builder setName(String name) {
+        public Builder name(String name) {
             this.name = name;
             return this;
         }
@@ -130,12 +146,12 @@ public class Message {
             return this;
         }
 
-        public Builder setTopic(String topic) {
+        public Builder topic(String topic) {
             this.topic = topic;
             return this;
         }
 
-        public Builder setCondition(String condition) {
+        public Builder condition(String condition) {
             this.condition = condition;
             return this;
         }
@@ -152,6 +168,11 @@ public class Message {
 
         public Builder notification(Notification notification) {
             this.notification = notification;
+            return this;
+        }
+
+        public Builder data(String key, String value) {
+            data.put(key, value);
             return this;
         }
 

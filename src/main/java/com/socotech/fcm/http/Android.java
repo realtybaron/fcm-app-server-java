@@ -104,41 +104,26 @@ public class Android {
             this.data = new LinkedHashMap<>();
         }
 
-        /**
-         * Sets the collapseKey property.
-         */
         public Builder collapseKey(String value) {
             collapseKey = value;
             return this;
         }
 
-        /**
-         * Sets the time to live, in seconds.
-         */
         public Builder timeToLive(float value) {
             timeToLive = value;
             return this;
         }
 
-        /**
-         * Adds a key/value pair to the payload data.
-         */
         public Builder data(String key, String value) {
             data.put(key, value);
             return this;
         }
 
-        /**
-         * Sets the restrictedPackageName property.
-         */
         public Builder restrictedPackageName(String value) {
             restrictedPackageName = value;
             return this;
         }
 
-        /**
-         * Sets the priority property.
-         */
         public Builder priority(Priority value) {
             switch (value) {
                 case HIGH:
@@ -152,9 +137,6 @@ public class Android {
             return this;
         }
 
-        /**
-         * Sets the notification property.
-         */
         public Builder notification(AndroidNotification value) {
             notification = value;
             return this;
