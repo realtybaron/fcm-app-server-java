@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.socotech.fcm.http.SenderTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2017-12-11T19:26:26" hostname="new-host-7.home" time="1.883">
+  <properties/>
+  <testcase name="testIOS" classname="com.socotech.fcm.http.SenderTest" time="1.388"/>
+  <testcase name="testAndroid" classname="com.socotech.fcm.http.SenderTest" time="0.263"/>
+  <testcase name="testWebpush" classname="com.socotech.fcm.http.SenderTest" time="0.23"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
