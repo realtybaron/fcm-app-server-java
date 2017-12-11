@@ -123,7 +123,7 @@ public class Android {
         /**
          * Adds a key/value pair to the payload data.
          */
-        public Builder addData(String key, String value) {
+        public Builder data(String key, String value) {
             data.put(key, value);
             return this;
         }
