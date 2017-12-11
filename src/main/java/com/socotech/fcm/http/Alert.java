@@ -18,7 +18,7 @@ public class Alert {
     private String title;
     @Expose
     @SerializedName("loc-key")
-    private String locKey;
+    private String bodyLocKey;
     @Expose
     @SerializedName("launch-image")
     private String launchImage;
@@ -30,7 +30,7 @@ public class Alert {
     private String actionLocKey;
     @Expose
     @SerializedName("loc-args")
-    private List<String> locArgs;
+    private List<String> bodyLocArgs;
     @Expose
     @SerializedName("title-loc-args")
     private List<String> titleLocArgs;
@@ -38,12 +38,12 @@ public class Alert {
     private Alert(Builder builder) {
         body = builder.body;
         title = builder.title;
-        locKey = builder.locKey;
+        bodyLocKey = builder.bodyLocKey;
         launchImage = builder.launchImage;
         titleLocKey = builder.titleLocKey;
         actionLocKey = builder.actionLocKey;
-        if (!builder.locArgs.isEmpty()) {
-            locArgs = Collections.unmodifiableList(builder.locArgs);
+        if (!builder.bodyLocArgs.isEmpty()) {
+            bodyLocArgs = Collections.unmodifiableList(builder.bodyLocArgs);
         }
         if (!builder.titleLocArgs.isEmpty()) {
             titleLocArgs = Collections.unmodifiableList(builder.titleLocArgs);
@@ -66,12 +66,12 @@ public class Alert {
         this.title = title;
     }
 
-    public String getLocKey() {
-        return locKey;
+    public String getBodyLocKey() {
+        return bodyLocKey;
     }
 
-    public void setLocKey(String locKey) {
-        this.locKey = locKey;
+    public void setBodyLocKey(String bodyLocKey) {
+        this.bodyLocKey = bodyLocKey;
     }
 
     public String getLaunchImage() {
@@ -98,12 +98,12 @@ public class Alert {
         this.actionLocKey = actionLocKey;
     }
 
-    public List<String> getLocArgs() {
-        return locArgs;
+    public List<String> getBodyLocArgs() {
+        return bodyLocArgs;
     }
 
-    public void setLocArgs(List<String> locArgs) {
-        this.locArgs = locArgs;
+    public void setBodyLocArgs(List<String> bodyLocArgs) {
+        this.bodyLocArgs = bodyLocArgs;
     }
 
     public List<String> getTitleLocArgs() {
@@ -117,15 +117,15 @@ public class Alert {
     public static final class Builder {
         private String body;
         private String title;
-        private String locKey;
+        private String bodyLocKey;
         private String launchImage;
         private String titleLocKey;
         private String actionLocKey;
-        private List<String> locArgs;
+        private List<String> bodyLocArgs;
         private List<String> titleLocArgs;
 
         public Builder() {
-            this.locArgs = Lists.newArrayList();
+            this.bodyLocArgs = Lists.newArrayList();
             this.titleLocArgs = Lists.newArrayList();
         }
 
@@ -139,33 +139,33 @@ public class Alert {
             return this;
         }
 
-        public Builder setLocKey(String locKey) {
-            this.locKey = locKey;
+        public Builder bodyLocKey(String locKey) {
+            this.bodyLocKey = locKey;
             return this;
         }
 
-        public Builder setLaunchImage(String launchImage) {
+        public Builder launchImage(String launchImage) {
             this.launchImage = launchImage;
             return this;
         }
 
-        public Builder setTitleLocKey(String titleLocKey) {
+        public Builder titleLocKey(String titleLocKey) {
             this.titleLocKey = titleLocKey;
             return this;
         }
 
-        public Builder setActionLocKey(String actionLocKey) {
+        public Builder actionLocKey(String actionLocKey) {
             this.actionLocKey = actionLocKey;
             return this;
         }
 
-        public Builder addLocArg(String titleLocArgs) {
-            this.locArgs.add(titleLocArgs);
+        public Builder bodyLocArg(String locArg) {
+            this.bodyLocArgs.add(locArg);
             return this;
         }
 
-        public Builder addTitleLocKey(String actionLocKey) {
-            this.titleLocArgs.add(actionLocKey);
+        public Builder titleLocArg(String titleLocArg) {
+            this.titleLocArgs.add(titleLocArg);
             return this;
         }
 
