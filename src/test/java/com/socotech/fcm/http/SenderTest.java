@@ -1,5 +1,7 @@
 package com.socotech.fcm.http;
 
+import com.google.gson.Gson;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,11 +17,11 @@ import java.io.IOException;
  */
 @RunWith(JUnit4.class)
 public class SenderTest {
-    private Sender sender;
+    private Gson gson;
 
     @Before
     public void onSetup() throws IOException {
-        this.sender = new Sender("you-worth");
+        this.gson = new Gson();
     }
 
     @Test
@@ -29,20 +31,20 @@ public class SenderTest {
         Aps aps = new Aps.Builder().alert(alert).build();
         Payload payload = new Payload.Builder().aps(aps).build();
         Apns apns = new Apns.Builder().payload(payload).build();
-        Message message = new Message.Builder().token(TOKEN).apns(apns).build();
+        Message message = new Message.Builder().data("name1", "value1").data("name2", "value2").token(TOKEN).apns(apns).build();
         request.setMessage(message);
         request.setValidateOnly(true);
-        this.sender.send(request);
+        Assert.assertEquals(gson.toJson(request), "");
     }
 
     @Test
     public void testAndroid() throws IOException {
         Notification notification = new Notification.Builder().title("Testing").body("Testing an Android push notification").build();
-        Message message = new Message.Builder().token(TOKEN).notification(notification).build();
+        Message message = new Message.Builder().data("name1", "value1").data("name2", "value2").token(TOKEN).notification(notification).build();
         Request request = new Request();
         request.setMessage(message);
         request.setValidateOnly(true);
-        this.sender.send(request);
+        Assert.assertEquals(gson.toJson(request), "");
     }
 
     @Test
@@ -50,11 +52,11 @@ public class SenderTest {
         Request request = new Request();
         WebpushNotification notification = new WebpushNotification.Builder().title("Testing").body("Testing an Web push notification").build();
         Webpush webpush = new Webpush.Builder().notification(notification).build();
-        Message message = new Message.Builder().token(TOKEN).webpush(webpush).build();
+        Message message = new Message.Builder().data("name1", "value1").data("name2", "value2").token(TOKEN).webpush(webpush).build();
         request.setMessage(message);
         request.setValidateOnly(true);
-        this.sender.send(request);
+        Assert.assertEquals(gson.toJson(request), "");
     }
 
-    private static final String TOKEN = "cJjwcGdfQJg:APA91bG06xkuJvwGyo-9K0l2aY58gn5Dnng_C14za2fxs9M89nEEpyYoKCnYCDLzHhQMJ1Bg4kigzdlFHq7D8f9a1ZThSNKHMdjyw5FAmSNbMtzYv_CewyRAWpkFX7B8DVXcI4nLLA2S";
+    private static final String TOKEN = "abc123xyz";
 }

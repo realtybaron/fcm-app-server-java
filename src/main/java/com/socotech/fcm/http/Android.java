@@ -30,11 +30,13 @@ public class Android {
     private AndroidNotification notification;
 
     private Android(Android.Builder builder) {
-        ttl = builder.timeToLive + "s";
         priority = builder.priority;
         collapseKey = builder.collapseKey;
         notification = builder.notification;
         restrictedPackageName = builder.restrictedPackageName;
+        if (builder.ttl != null) {
+            ttl = builder.ttl + "s";
+        }
         if (!builder.data.isEmpty()) {
             data = Collections.unmodifiableMap(builder.data);
         }
@@ -93,7 +95,7 @@ public class Android {
     }
 
     public static final class Builder {
-        private Float timeToLive;
+        private Float ttl;
         private String priority;
         private String collapseKey;
         private String restrictedPackageName;
@@ -109,8 +111,8 @@ public class Android {
             return this;
         }
 
-        public Builder timeToLive(float value) {
-            timeToLive = value;
+        public Builder ttl(float value) {
+            ttl = value;
             return this;
         }
 

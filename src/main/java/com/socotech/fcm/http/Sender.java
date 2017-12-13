@@ -117,7 +117,9 @@ public class Sender {
         int status;
         HttpURLConnection conn;
         try {
-            conn = this.post(url, "application/json", gson.toJson(request));
+            String body = gson.toJson(request);
+            logger.log(Level.FINE, body);
+            conn = this.post(url, "application/json", body);
             status = conn.getResponseCode();
         } catch (IOException e) {
             logger.log(Level.FINE, "IOException posting to FCM", e);
