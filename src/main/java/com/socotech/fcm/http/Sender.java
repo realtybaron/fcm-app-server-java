@@ -18,8 +18,11 @@ package com.socotech.fcm.http;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.common.io.Closeables;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
@@ -44,7 +47,13 @@ public class Sender {
      */
     public Sender(String projectId) throws IOException {
         this.url = String.format("https://fcm.googleapis.com/v1/projects/%s/messages:send", projectId);
-        this.gson = new Gson();
+        GsonBuilder gsonBuilder = new GsonBuilder().registerTypeAdapter(Message.class, new InstanceCreator<Message>() {
+            @Override
+            public Message createInstance(Type type) {
+                return new Message.Builder().build();
+            }
+        });
+        this.gson = gsonBuilder.create();
         this.random = new Random();
         String scope = "https://www.googleapis.com/auth/firebase.messaging";
         InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("service-account.json");
@@ -63,12 +72,12 @@ public class Sender {
      * @throws InvalidRequestException  if GCM didn't returned a 200 status.
      * @throws IllegalArgumentException if to is {@literal null}.
      */
-    public Message send(Request request) throws IOException {
+    public Response send(Request request) throws IOException {
         String responseBody = this.makeFcmHttpRequest(request);
         if (responseBody == null) {
             return null;
         } else {
-            return gson.fromJson(responseBody, Message.class);
+            return gson.fromJson(responseBody, Response.class);
         }
     }
 
@@ -87,11 +96,11 @@ public class Sender {
      * @throws InvalidRequestException  if GCM didn't returned a 200 or 5xx status.
      * @throws IOException              if message could not be sent.
      */
-    public Message send(Request request, int retries) throws IOException {
+    public Response send(Request request, int retries) throws IOException {
         int attempt = 0;
         int backoff = BACKOFF_INITIAL_DELAY;
         boolean tryAgain;
-        Message response;
+        Response response;
         do {
             attempt++;
             if (logger.isLoggable(Level.FINE)) {

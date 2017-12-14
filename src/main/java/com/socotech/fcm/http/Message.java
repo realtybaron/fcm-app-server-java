@@ -14,9 +14,6 @@ public class Message {
     @SerializedName("apns")
     private Apns apns;
     @Expose
-    @SerializedName("name")
-    private String name;
-    @Expose
     @SerializedName("token")
     private String token;
     @Expose
@@ -40,7 +37,6 @@ public class Message {
 
     private Message(Builder builder) {
         this.apns = builder.apns;
-        this.name = builder.name;
         this.token = builder.token;
         this.topic = builder.topic;
         this.android = builder.android;
@@ -58,14 +54,6 @@ public class Message {
 
     public void setApns(Apns apns) {
         this.apns = apns;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getToken() {
@@ -118,7 +106,6 @@ public class Message {
 
     public static final class Builder {
         private Apns apns;
-        private String name;
         private String token;
         private String topic;
         private String condition;
@@ -133,11 +120,6 @@ public class Message {
 
         public Builder apns(Apns apns) {
             this.apns = apns;
-            return this;
-        }
-
-        public Builder name(String name) {
-            this.name = name;
             return this;
         }
 
