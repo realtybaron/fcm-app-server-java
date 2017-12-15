@@ -18,11 +18,8 @@ package com.socotech.fcm.http;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.common.io.Closeables;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.InstanceCreator;
 
 import java.io.*;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
@@ -47,13 +44,7 @@ public class Sender {
      */
     public Sender(String projectId) throws IOException {
         this.url = String.format("https://fcm.googleapis.com/v1/projects/%s/messages:send", projectId);
-        GsonBuilder gsonBuilder = new GsonBuilder().registerTypeAdapter(Message.class, new InstanceCreator<Message>() {
-            @Override
-            public Message createInstance(Type type) {
-                return new Message.Builder().build();
-            }
-        });
-        this.gson = gsonBuilder.create();
+        this.gson = new Gson();
         this.random = new Random();
         String scope = "https://www.googleapis.com/auth/firebase.messaging";
         InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("service-account.json");
