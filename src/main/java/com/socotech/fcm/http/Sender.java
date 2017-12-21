@@ -32,10 +32,11 @@ import java.util.logging.Logger;
  */
 public class Sender {
 
-    private final Gson gson;
-    private final String url;
-    private final Random random;
-    private final String accessToken;
+    private Gson gson;
+    private String url;
+    private Random random;
+    private String accessToken;
+    private GoogleCredential credential;
 
     /**
      * Default constructor.
@@ -48,8 +49,8 @@ public class Sender {
         this.random = new Random();
         String scope = "https://www.googleapis.com/auth/firebase.messaging";
         InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("service-account.json");
-        GoogleCredential credential = GoogleCredential.fromStream(stream).createScoped(Collections.singletonList(scope));
-        credential.refreshToken();
+        this.credential = GoogleCredential.fromStream(stream).createScoped(Collections.singletonList(scope));
+        this.credential.refreshToken();
         this.accessToken = credential.getAccessToken();
     }
 
@@ -64,12 +65,7 @@ public class Sender {
      * @throws IllegalArgumentException if to is {@literal null}.
      */
     public Response send(Request request) throws IOException {
-        String responseBody = this.makeFcmHttpRequest(request);
-        if (responseBody == null) {
-            return null;
-        } else {
-            return gson.fromJson(responseBody, Response.class);
-        }
+        return send(request, 1);
     }
 
     /**
@@ -91,13 +87,16 @@ public class Sender {
         int attempt = 0;
         int backoff = BACKOFF_INITIAL_DELAY;
         boolean tryAgain;
-        Response response;
+        Response response = null;
         do {
             attempt++;
             if (logger.isLoggable(Level.FINE)) {
                 logger.fine("Attempt #" + attempt + " to send message " + request + " to regIds " + request.getMessage().getToken());
             }
-            response = this.send(request);
+            String responseBody = this.makeFcmHttpRequest(request);
+            if (responseBody != null) {
+                response = gson.fromJson(responseBody, Response.class);
+            }
             tryAgain = response == null && attempt <= retries;
             if (tryAgain) {
                 int sleepTime = backoff / 2 + random.nextInt(backoff);
@@ -126,26 +125,33 @@ public class Sender {
             return null;
         }
         String responseBody;
-        if (status != 200) {
-            try {
-                responseBody = getAndClose(conn.getErrorStream());
-                logger.finest("JSON error response: " + responseBody);
-            } catch (IOException e) {
-                // ignore the exception since it will thrown an InvalidRequestException
-                // anyways
-                responseBody = "N/A";
-                logger.log(Level.FINE, "Exception reading response: ", e);
-            }
-            throw new InvalidRequestException(status, responseBody);
+        switch (status) {
+            case 200:
+                try {
+                    responseBody = getAndClose(conn.getInputStream());
+                } catch (IOException e) {
+                    logger.log(Level.WARNING, "IOException reading response", e);
+                    return null;
+                }
+                logger.finest("JSON response: " + responseBody);
+                return responseBody;
+            case 401:
+                try {
+                    this.credential.refreshToken();
+                    this.accessToken = credential.getAccessToken();
+                } catch (IOException e) {
+                    logger.log(Level.WARNING, "IOException refreshing token", e);
+                }
+            default:
+                try {
+                    responseBody = getAndClose(conn.getErrorStream());
+                    logger.finest("JSON error response: " + responseBody);
+                } catch (IOException e) {
+                    responseBody = "N/A";
+                    logger.log(Level.FINE, "Exception reading response: ", e);
+                }
+                throw new InvalidRequestException(status, responseBody);
         }
-        try {
-            responseBody = getAndClose(conn.getInputStream());
-        } catch (IOException e) {
-            logger.log(Level.WARNING, "IOException reading response", e);
-            return null;
-        }
-        logger.finest("JSON response: " + responseBody);
-        return responseBody;
     }
 
     /**
