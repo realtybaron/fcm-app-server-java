@@ -90,8 +90,8 @@ public class Sender {
         Response response = null;
         do {
             attempt++;
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Attempt #" + attempt + " to send message " + request + " to regIds " + request.getMessage().getToken());
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine("Attempt #" + attempt + " to send message " + request + " to regIds " + request.getMessage().getToken());
             }
             String responseBody = this.makeFcmHttpRequest(request);
             if (responseBody != null) {
@@ -114,43 +114,32 @@ public class Sender {
 
     private String makeFcmHttpRequest(Request request) throws InvalidRequestException {
         int status;
+        String responseBody;
         HttpURLConnection conn;
         try {
             String body = gson.toJson(request);
-            logger.log(Level.FINE, body);
             conn = this.post(url, "application/json", body);
             status = conn.getResponseCode();
-        } catch (IOException e) {
-            logger.log(Level.FINE, "IOException posting to FCM", e);
-            return null;
-        }
-        String responseBody;
-        switch (status) {
-            case 200:
-                try {
+
+            switch (status) {
+                case 200:
                     responseBody = getAndClose(conn.getInputStream());
-                } catch (IOException e) {
-                    logger.log(Level.WARNING, "IOException reading response", e);
-                    return null;
-                }
-                logger.finest("JSON response: " + responseBody);
-                return responseBody;
-            case 401:
-                try {
-                    this.credential.refreshToken();
-                    this.accessToken = credential.getAccessToken();
-                } catch (IOException e) {
-                    logger.log(Level.WARNING, "IOException refreshing token", e);
-                }
-            default:
-                try {
+                    LOGGER.finest("JSON response: " + responseBody);
+                    return responseBody;
+                case 401:
+                    if (this.credential.refreshToken()) {
+                        this.accessToken = credential.getAccessToken();
+                    } else {
+                        LOGGER.log(Level.SEVERE, "Refreshing access token failed");
+                    }
+                default:
                     responseBody = getAndClose(conn.getErrorStream());
-                    logger.finest("JSON error response: " + responseBody);
-                } catch (IOException e) {
-                    responseBody = "N/A";
-                    logger.log(Level.FINE, "Exception reading response: ", e);
-                }
-                throw new InvalidRequestException(status, responseBody);
+                    LOGGER.finest("JSON error response: " + responseBody);
+                    throw new InvalidRequestException(status, responseBody);
+            }
+        } catch (IOException e) {
+            LOGGER.log(Level.FINE, "IOException posting to FCM", e);
+            return null;
         }
     }
 
@@ -172,10 +161,10 @@ public class Sender {
             throw new IllegalArgumentException("arguments cannot be null");
         }
         if (!url.startsWith("https://")) {
-            logger.warning("URL does not use https: " + url);
+            LOGGER.warning("URL does not use https: " + url);
         }
-        logger.fine("Sending POST to " + url);
-        logger.finest("POST body: " + body);
+        LOGGER.fine("Sending POST to " + url);
+        LOGGER.finest("POST body: " + body);
         byte[] bytes = body.getBytes(UTF8);
         HttpURLConnection conn = getConnection(url);
         conn.setDoOutput(true);
@@ -256,5 +245,5 @@ public class Sender {
     /**
      * Logger
      */
-    private static final Logger logger = Logger.getLogger(Sender.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Sender.class.getName());
 }
