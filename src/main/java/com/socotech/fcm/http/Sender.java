@@ -115,7 +115,7 @@ public class Sender {
     private String makeFcmHttpRequest(Request request) throws InvalidRequestException {
         int status;
         String responseBody;
-        HttpURLConnection conn;
+        HttpURLConnection conn = null;
         try {
             String body = gson.toJson(request);
             conn = this.post(url, "application/json", body);
@@ -140,6 +140,10 @@ public class Sender {
         } catch (IOException e) {
             LOGGER.log(Level.FINE, "IOException posting to FCM", e);
             return null;
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
         }
     }
 
