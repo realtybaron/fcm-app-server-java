@@ -65,7 +65,7 @@ public class Sender {
      * @throws IllegalArgumentException if to is {@literal null}.
      */
     public Response send(Request request) throws IOException {
-        return send(request, 1);
+        return send(request, 0);
     }
 
     /**

@@ -16,7 +16,7 @@ import java.io.IOException;
  * Time: 8:50 PM
  */
 @RunWith(JUnit4.class)
-public class SenderTest {
+public class RequestTest {
     private Gson gson;
 
     @Before
