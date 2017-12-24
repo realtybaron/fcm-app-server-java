@@ -90,9 +90,6 @@ public class Sender {
         Response response = null;
         do {
             attempt++;
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine("Attempt #" + attempt + " to send message " + request + " to regIds " + request.getMessage().getToken());
-            }
             String responseBody = this.makeFcmHttpRequest(request);
             if (responseBody != null) {
                 response = gson.fromJson(responseBody, Response.class);
@@ -120,25 +117,24 @@ public class Sender {
             String body = gson.toJson(request);
             conn = this.post(url, "application/json", body);
             status = conn.getResponseCode();
-
             switch (status) {
                 case 200:
                     responseBody = getAndClose(conn.getInputStream());
-                    LOGGER.finest("JSON response: " + responseBody);
+                    LOGGER.log(Level.INFO, "JSON response: " + responseBody);
                     return responseBody;
                 case 401:
                     if (this.credential.refreshToken()) {
                         this.accessToken = credential.getAccessToken();
                     } else {
-                        LOGGER.log(Level.SEVERE, "Refreshing access token failed");
+                        LOGGER.log(Level.WARNING, "Refreshing access token failed");
                     }
                 default:
                     responseBody = getAndClose(conn.getErrorStream());
-                    LOGGER.finest("JSON error response: " + responseBody);
+                    LOGGER.log(Level.WARNING, "JSON error response: " + responseBody);
                     throw new InvalidRequestException(status, responseBody);
             }
         } catch (IOException e) {
-            LOGGER.log(Level.FINE, "IOException posting to FCM", e);
+            LOGGER.log(Level.SEVERE, "IOException posting to FCM", e);
             return null;
         } finally {
             if (conn != null) {
@@ -165,10 +161,10 @@ public class Sender {
             throw new IllegalArgumentException("arguments cannot be null");
         }
         if (!url.startsWith("https://")) {
-            LOGGER.warning("URL does not use https: " + url);
+            LOGGER.log(Level.WARNING, "URL does not use https: " + url);
         }
-        LOGGER.fine("Sending POST to " + url);
-        LOGGER.finest("POST body: " + body);
+        LOGGER.log(Level.INFO, "Send to " + url);
+        LOGGER.log(Level.INFO, "POST body: " + body);
         byte[] bytes = body.getBytes(UTF8);
         HttpURLConnection conn = getConnection(url);
         conn.setDoOutput(true);
