@@ -104,6 +104,14 @@ public class Message {
         this.notification = notification;
     }
 
+    public Map<String, String> getData() {
+        return data;
+    }
+
+    public void setData(Map<String, String> data) {
+        this.data = data;
+    }
+
     public static final class Builder {
         private Apns apns;
         private String token;
