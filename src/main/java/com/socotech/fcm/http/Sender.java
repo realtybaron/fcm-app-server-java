@@ -133,6 +133,8 @@ public class Sender {
                     LOGGER.log(Level.WARNING, "JSON error response: " + responseBody);
                     throw new InvalidRequestException(status, responseBody);
             }
+        } catch (InvalidRequestException e) {
+            throw e;
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "IOException posting to FCM", e);
             return null;
