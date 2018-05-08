@@ -44,11 +44,22 @@ public class Sender {
      * @param projectId project ID
      */
     public Sender(String projectId) throws IOException {
+        this(projectId, Thread.currentThread().getContextClassLoader());
+    }
+
+    /**
+     * Default constructor.
+     *
+     * @param projectId   project ID
+     * @param classLoader class loader used to find "service-account.json"
+     * @throws IOException
+     */
+    public Sender(String projectId, ClassLoader classLoader) throws IOException {
         this.url = String.format("https://fcm.googleapis.com/v1/projects/%s/messages:send", projectId);
         this.gson = new Gson();
         this.random = new Random();
         String scope = "https://www.googleapis.com/auth/firebase.messaging";
-        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("service-account.json");
+        InputStream stream = classLoader.getResourceAsStream("service-account.json");
         this.credential = GoogleCredential.fromStream(stream).createScoped(Collections.singletonList(scope));
         this.credential.refreshToken();
         this.accessToken = credential.getAccessToken();
