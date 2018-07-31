@@ -136,6 +136,7 @@ public class Sender {
                 case 401:
                     if (this.credential.refreshToken()) {
                         this.accessToken = credential.getAccessToken();
+                        return null; // force retry
                     } else {
                         LOGGER.log(Level.WARNING, "Refreshing access token failed");
                     }
