@@ -15,11 +15,15 @@ public class WebpushNotification {
     @Expose
     @SerializedName("title")
     private String title;
+    @Expose
+    @SerializedName("click_action")
+    private String action;
 
     private WebpushNotification(Builder builder) {
         body = builder.body;
         icon = builder.icon;
         title = builder.title;
+        action = builder.action;
     }
 
     public String getBody() {
@@ -46,10 +50,19 @@ public class WebpushNotification {
         this.title = title;
     }
 
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
     public static class Builder {
         String body;
         String icon;
         String title;
+        String action;
 
         public Builder body(String body) {
             this.body = body;
@@ -63,6 +76,11 @@ public class WebpushNotification {
 
         public Builder title(String title) {
             this.title = title;
+            return this;
+        }
+
+        public Builder action(String action) {
+            this.action = action;
             return this;
         }
 

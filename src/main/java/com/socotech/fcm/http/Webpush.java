@@ -17,10 +17,15 @@ public class Webpush {
     @SerializedName("headers")
     private Map<String, String> headers;
     @Expose
+    @SerializedName("fcm_options")
+    private WebpushFcmOptions options;
+    @Expose
     @SerializedName("notification")
     private WebpushNotification notification;
 
+
     private Webpush(Builder builder) {
+        options = builder.options;
         notification = builder.notification;
         if (!builder.data.isEmpty()) {
             data = Collections.unmodifiableMap(builder.data);
@@ -46,6 +51,14 @@ public class Webpush {
         this.data = data;
     }
 
+    public WebpushFcmOptions getOptions() {
+        return options;
+    }
+
+    public void setOptions(WebpushFcmOptions options) {
+        this.options = options;
+    }
+
     public WebpushNotification getNotification() {
         return notification;
     }
@@ -56,6 +69,7 @@ public class Webpush {
 
     public static final class Builder {
 
+        private WebpushFcmOptions options;
         private Map<String, String> data;
         private Map<String, String> headers;
         private WebpushNotification notification;
@@ -78,6 +92,14 @@ public class Webpush {
          */
         public Builder header(String key, String value) {
             headers.put(key, value);
+            return this;
+        }
+
+        /**
+         * Sets the options property
+         */
+        public Builder options(WebpushFcmOptions value) {
+            options = value;
             return this;
         }
 
