@@ -23,7 +23,11 @@ public class Webpush {
     @SerializedName("notification")
     private WebpushNotification notification;
 
-
+    /**
+     * Default constructor
+     *
+     * @param builder a builder
+     */
     private Webpush(Builder builder) {
         options = builder.options;
         notification = builder.notification;
