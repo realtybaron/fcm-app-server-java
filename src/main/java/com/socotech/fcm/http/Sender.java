@@ -18,6 +18,8 @@ package com.socotech.fcm.http;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.common.io.Closeables;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -57,6 +59,7 @@ public class Sender {
     public Sender(String projectId, ClassLoader classLoader) throws IOException {
         this.url = String.format("https://fcm.googleapis.com/v1/projects/%s/messages:send", projectId);
         this.gson = new Gson();
+        this.gson = new GsonBuilder().registerTypeAdapter(Message.class, (InstanceCreator<Message>) type -> new Message.Builder().build()).create();
         this.random = new Random();
         String scope = "https://www.googleapis.com/auth/firebase.messaging";
         InputStream stream = classLoader.getResourceAsStream("service-account.json");
@@ -75,7 +78,7 @@ public class Sender {
      * @throws InvalidRequestException  if GCM didn't returned a 200 status.
      * @throws IllegalArgumentException if to is {@literal null}.
      */
-    public Response send(Request request) throws IOException {
+    public Message send(Request request) throws IOException {
         return send(request, 0);
     }
 
@@ -94,16 +97,16 @@ public class Sender {
      * @throws InvalidRequestException  if GCM didn't returned a 200 or 5xx status.
      * @throws IOException              if message could not be sent.
      */
-    public Response send(Request request, int retries) throws IOException {
+    public Message send(Request request, int retries) throws IOException {
         int attempt = 0;
         int backoff = BACKOFF_INITIAL_DELAY;
         boolean tryAgain;
-        Response response = null;
+        Message response = null;
         do {
             attempt++;
             String responseBody = this.makeFcmHttpRequest(request);
             if (responseBody != null) {
-                response = gson.fromJson(responseBody, Response.class);
+                response = gson.fromJson(responseBody, Message.class);
             }
             tryAgain = response == null && attempt <= retries;
             if (tryAgain) {
