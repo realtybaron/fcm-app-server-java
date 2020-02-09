@@ -16,7 +16,6 @@
 package com.socotech.fcm.http;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.common.io.Closeables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
@@ -190,11 +189,8 @@ public class Sender {
         conn.setRequestProperty("Content-Type", contentType);
         conn.setRequestProperty("Authorization", "Bearer " + accessToken);
         conn.setFixedLengthStreamingMode(bytes.length);
-        OutputStream out = conn.getOutputStream();
-        try {
+        try (OutputStream out = conn.getOutputStream()) {
             out.write(bytes);
-        } finally {
-            Closeables.close(out, true);
         }
         return conn;
     }
@@ -237,7 +233,7 @@ public class Sender {
             return getString(stream);
         } finally {
             if (stream != null) {
-                Closeables.close(stream, true);
+                stream.close();
             }
         }
     }
