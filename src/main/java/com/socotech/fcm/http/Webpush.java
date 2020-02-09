@@ -74,8 +74,8 @@ public class Webpush {
     public static final class Builder {
 
         private WebpushFcmOptions options;
-        private Map<String, String> data;
-        private Map<String, String> headers;
+        private final Map<String, String> data;
+        private final Map<String, String> headers;
         private WebpushNotification notification;
 
         public Builder() {

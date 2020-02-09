@@ -99,7 +99,7 @@ public class Android {
         private String priority;
         private String collapseKey;
         private String restrictedPackageName;
-        private Map<String, String> data;
+        private final Map<String, String> data;
         private AndroidNotification notification;
 
         public Builder() {

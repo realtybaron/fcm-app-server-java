@@ -120,7 +120,7 @@ public class Message {
         private Android android;
         private Webpush webpush;
         private Notification notification;
-        private Map<String, String> data;
+        private final Map<String, String> data;
 
         public Builder() {
             this.data = new LinkedHashMap<>();

@@ -44,7 +44,7 @@ public class Apns {
     public static final class Builder {
 
         private Payload payload;
-        private Map<String, String> headers;
+        private final Map<String, String> headers;
 
         public Builder() {
             this.headers = new LinkedHashMap<>();

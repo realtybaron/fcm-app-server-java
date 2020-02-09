@@ -121,8 +121,8 @@ public class Alert {
         private String launchImage;
         private String titleLocKey;
         private String actionLocKey;
-        private List<String> bodyLocArgs;
-        private List<String> titleLocArgs;
+        private final List<String> bodyLocArgs;
+        private final List<String> titleLocArgs;
 
         public Builder() {
             this.bodyLocArgs = Lists.newArrayList();

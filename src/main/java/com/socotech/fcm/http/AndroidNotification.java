@@ -161,8 +161,8 @@ public class AndroidNotification {
         private String bodyLocKey;
         private String clickAction;
         private String titleLocKey;
-        private List<String> bodyLocArgs;
-        private List<String> titleLocArgs;
+        private final List<String> bodyLocArgs;
+        private final List<String> titleLocArgs;
 
         public Builder() {
             this.sound = "default"; // the only currently supported value

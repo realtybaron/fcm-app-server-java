@@ -16,7 +16,6 @@
 package com.socotech.fcm.http;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.common.io.Closeables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
@@ -24,6 +23,7 @@ import com.google.gson.InstanceCreator;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Random;
 import java.util.logging.Level;
@@ -35,10 +35,10 @@ import java.util.logging.Logger;
 public class Sender {
 
     private Gson gson;
-    private String url;
-    private Random random;
+    private final String url;
+    private final Random random;
     private String accessToken;
-    private GoogleCredential credential;
+    private final GoogleCredential credential;
 
     /**
      * Default constructor.
@@ -182,7 +182,7 @@ public class Sender {
         }
         LOGGER.log(Level.INFO, "Send to " + url);
         LOGGER.log(Level.INFO, "POST body: " + body);
-        byte[] bytes = body.getBytes(UTF8);
+        byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
         HttpURLConnection conn = getConnection(url);
         conn.setDoOutput(true);
         conn.setUseCaches(false);
@@ -190,11 +190,8 @@ public class Sender {
         conn.setRequestProperty("Content-Type", contentType);
         conn.setRequestProperty("Authorization", "Bearer " + accessToken);
         conn.setFixedLengthStreamingMode(bytes.length);
-        OutputStream out = conn.getOutputStream();
-        try {
+        try (OutputStream out = conn.getOutputStream()) {
             out.write(bytes);
-        } finally {
-            Closeables.close(out, true);
         }
         return conn;
     }
@@ -237,7 +234,7 @@ public class Sender {
             return getString(stream);
         } finally {
             if (stream != null) {
-                Closeables.close(stream, true);
+                stream.close();
             }
         }
     }
