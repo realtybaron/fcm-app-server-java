@@ -34,10 +34,11 @@ import java.util.logging.Logger;
  */
 public class Sender {
 
-    private Gson gson;
+    private String accessToken;
+
+    private final Gson gson;
     private final String url;
     private final Random random;
-    private String accessToken;
     private final GoogleCredential credential;
 
     /**
@@ -58,7 +59,6 @@ public class Sender {
      */
     public Sender(String projectId, ClassLoader classLoader) throws IOException {
         this.url = String.format("https://fcm.googleapis.com/v1/projects/%s/messages:send", projectId);
-        this.gson = new Gson();
         this.gson = new GsonBuilder().registerTypeAdapter(Message.class, (InstanceCreator<Message>) type -> new Message.Builder().build()).create();
         this.random = new Random();
         String scope = "https://www.googleapis.com/auth/firebase.messaging";
